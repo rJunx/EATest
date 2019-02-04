@@ -11,7 +11,7 @@ import pandas as pd
 
 class App:
     def __init__(self):
-        self.df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
+        self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
         
     def get(self, url):
         try:
@@ -27,11 +27,18 @@ class App:
         else:
             self.status_code = response.code
             resp = json.loads(response.read())
-            resp = self.toDataFrame(resp)
+            self.__toDataFrame(resp)
             
         return resp
-    
-    def getValueByKey(self, item, key, default='Unknown'):
+        
+    def printDataInOrder(self):
+        df = self.__df.sort_values(by=['make', 'model', 'name'])
+        for _, row in df.iterrows():
+            print row['make']
+            print " "*5 + row['model']
+            print " "*10 + row['name']
+            
+    def __getValueByKey(self, item, key, default='Unknown'):
         if item.has_key(key):
             if item[key]=='':
                 return default
@@ -40,32 +47,23 @@ class App:
         else:
             return default
     
-    def toDataFrame(self, dList):
+    def __toDataFrame(self, dList):
         #make model name        
         for item in dList:
-            name = self.getValueByKey(item, 'name', '')
-            cars = self.getValueByKey(item, 'cars', [])
+            name = self.__getValueByKey(item, 'name')
+            cars = self.__getValueByKey(item, 'cars', [])
             
             for car in cars:
-                self.df = self.df.append({'make': self.getValueByKey(car, 'make'), 
-                                'model': self.getValueByKey(car, 'model', ''), 
+                self.__df = self.__df.append({'make': self.__getValueByKey(car, 'make'), 
+                                'model': self.__getValueByKey(car, 'model'), 
                                 'name':name}, ignore_index=True)
-
-        return self.df
-    
-    def printDataInOrder(self):
-        df = self.df.sort_values(by=['make', 'model', 'name'])
-        for _, row in df.iterrows():
-            print row['make']
-            print " "*5 + row['model']
-            print " "*10 + row['name']
 
 
 if __name__ == "__main__":
     myApp = App();
     
     try:
-        myApp.get('http://eacodingtest.digital.energyaustralia.com.au/api/v1/cars')
+        data = myApp.get('http://eacodingtest.digital.energyaustralia.com.au/api/v1/cars')
         myApp.printDataInOrder()
     except Exception as error:
-        print repr(error)
+        print error
