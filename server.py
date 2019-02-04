@@ -28,7 +28,6 @@ class App:
             self.status_code = response.code
             resp = json.loads(response.read())
             resp = self.toDataFrame(resp)
-            self.hasError = False
             
         return resp
     
