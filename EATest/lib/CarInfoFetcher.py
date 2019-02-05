@@ -3,13 +3,15 @@
 Spyder Editor
 
 This is a temporary script file.
+
+The module is to fetch car data from the API and store the data into a memory database (Pandas)
+Public Method:
+    
 """
 
 import urllib2
 import json
 import pandas as pd
-
-#The module is to fetch car data from the API and store the data into a memory database (Pandas)
 
 class CarInfoFetcher:
     def __init__(self):
@@ -47,7 +49,9 @@ class CarInfoFetcher:
             ret = ret + spaceSymbol*5 + row['model'] + breakLineSymbol
             ret = ret +  spaceSymbol*10 + row['name'] + breakLineSymbol
         return ret
-            
+
+
+    #Private method to 
     def __getValueByKey(self, item, key, default='Unknown'):
         if item.has_key(key):
             if item[key]=='':
