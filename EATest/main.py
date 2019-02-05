@@ -5,7 +5,7 @@ Spyder Editor
 This is a temporary script file.
 """
 
-from CarInfoFetcher import CarInfoFetcher
+from lib.CarInfoFetcher import CarInfoFetcher
 from flask import Flask, render_template
 
 app = Flask(__name__)
