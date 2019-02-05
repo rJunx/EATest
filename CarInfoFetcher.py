@@ -9,11 +9,15 @@ import urllib2
 import json
 import pandas as pd
 
+#The module is to fetch car data from the API and store the data into a memory database (Pandas)
+
 class CarInfoFetcher:
     def __init__(self):
         self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
         self.statusCode = 200
         
+        
+    #Fetch the data from url    
     def get(self, url):
         try:
             response = urllib2.urlopen(url)
@@ -30,9 +34,11 @@ class CarInfoFetcher:
             
         return resp
     
+    #Get the structure data table from database
     def getDataFrame(self):
         return self.__df
         
+    
     def printDataInOrder(self, spaceSymbol='', breakLineSymbol='\n'):
         df = self.__df.sort_values(by=['make', 'model', 'name'])
         ret = ''
