@@ -3,7 +3,7 @@ The project develops a Flask server to consume the API and show the car informat
 
 System requirement:
 MacOS
-Python 2.7.x
+Python 3.6.x
 Python Package Index (PyPI)
 
 

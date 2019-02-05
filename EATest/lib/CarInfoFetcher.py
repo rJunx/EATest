@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import urllib2
-import json
+import requests
 import pandas as pd
+from requests.exceptions import HTTPError, ConnectionError
+from json.decoder import JSONDecodeError
 
 class CarInfoFetcher:
     '''  
@@ -11,29 +12,26 @@ class CarInfoFetcher:
     
     def __init__(self):
         self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
-        self.statusCode = 200
+        self.statusCode = -1
         
-    
     def get(self, url):
         '''
         Fetch the data from a specific URL
         :return: the raw message from backend
         '''
-        
         try:
-            response = urllib2.urlopen(url)
-        except urllib2.HTTPError, e:
-            resp = e.read()
-            self.statusCode = e.code
-        except urllib2.URLError, e:
-            resp = e.read()
-            self.statusCode = e.code
-        else:
-            self.statusCode = response.code
-            resp = response.read()
-            self.__toDataFrame(json.loads(resp))
-            
-        return resp
+            response = requests.get(url, timeout=1)
+            self.statusCode = response.status_code
+            self.__toDataFrame(response.json())
+            return response.text
+        except HTTPError as e:
+            self.statusCode = response.status_code
+            return response.text
+        except ConnectionError as e:
+            self.statusCode = -1
+            return 'ConnectionError'
+        except JSONDecodeError as e:
+            return response.text
     
     def getDataFrame(self):
         '''
@@ -41,7 +39,6 @@ class CarInfoFetcher:
         :return: DataFrame (Pandas)
         '''
         return self.__df
-        
     
     def printDataInOrder(self, spaceSymbol='', breakLineSymbol='\n'):
         df = self.__df.sort_values(by=['make', 'model', 'name'])
@@ -52,10 +49,8 @@ class CarInfoFetcher:
             ret = ret +  spaceSymbol*10 + row['name'] + breakLineSymbol
         return ret
 
-
-    #Private method to 
     def __getValueByKey(self, item, key, default='Unknown'):
-        if item.has_key(key):
+        if key in item:
             if item[key]=='':
                 return default
             else:
