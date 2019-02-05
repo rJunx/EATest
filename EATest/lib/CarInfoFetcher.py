@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-
-The module is to fetch car data from the API and store the data into a memory database (Pandas)
-Public Method:
-    
-"""
 
 import urllib2
 import json
 import pandas as pd
 
 class CarInfoFetcher:
+    '''  
+    The module is to fetch car data from the API and store the data into a memory database (Pandas)
+    '''
+    
     def __init__(self):
         self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
         self.statusCode = 200
         
-        
-    #Fetch the data from url    
+    
     def get(self, url):
+        '''
+        Fetch the data from a specific URL
+        :return: the raw message from backend
+        '''
+        
         try:
             response = urllib2.urlopen(url)
         except urllib2.HTTPError, e:
@@ -31,13 +30,16 @@ class CarInfoFetcher:
             self.statusCode = e.code
         else:
             self.statusCode = response.code
-            resp = json.loads(response.read())
-            self.__toDataFrame(resp)
+            resp = response.read()
+            self.__toDataFrame(json.loads(resp))
             
         return resp
     
-    #Get the structure data table from database
     def getDataFrame(self):
+        '''
+        Get the dataframe generated from the successful reponse
+        :return: DataFrame (Pandas)
+        '''
         return self.__df
         
     

@@ -13,6 +13,11 @@ app.config.from_object('config')
 
 @app.route("/")
 def home():
+    '''
+    The simple homepage for showing the API response
+    :return: html string
+    '''
+        
     carInfoFetcher = CarInfoFetcher()
     attempTime = 0      
     hasError = True
