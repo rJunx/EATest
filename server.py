@@ -9,7 +9,7 @@ import urllib2
 import json
 import pandas as pd
 
-class App:
+class CarInfoFetcher:
     def __init__(self):
         self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
         
@@ -19,11 +19,9 @@ class App:
         except urllib2.HTTPError, e:
             resp = e.read()
             self.status_code = e.code
-            raise Exception(resp)
         except urllib2.URLError, e:
             resp = e.read()
             self.status_code = e.code
-            raise Exception(resp)
         else:
             self.status_code = response.code
             resp = json.loads(response.read())
@@ -59,11 +57,11 @@ class App:
                                 'name':name}, ignore_index=True)
 
 
-if __name__ == "__main__":
-    myApp = App();
+#if __name__ == "__main__":
+#    myApp = App();
     
-    try:
-        data = myApp.get('http://eacodingtest.digital.energyaustralia.com.au/api/v1/cars')
-        myApp.printDataInOrder()
-    except Exception as error:
-        print error
+#    try:
+#        data = myApp.get('http://eacodingtest.digital.energyaustralia.com.au/api/v1/cars')
+#        myApp.printDataInOrder()
+#    except Exception as error:
+#        print error
