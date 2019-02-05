@@ -10,6 +10,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 app.config.from_object('config')
+carInfoFetcher = CarInfoFetcher(app.config['API'], app.config['FAIL_RETRY_TIMES'], app.config['EXPIRES_AFTER_SEC'])
 
 @app.route("/")
 def home():
@@ -17,25 +18,13 @@ def home():
     The simple homepage for showing the API response
     :return: html string
     '''
-        
-    carInfoFetcher = CarInfoFetcher()
-    attempTime = 0      
-    hasError = True
-    resp = ''
+    resp = carInfoFetcher.requestData()
     
-    #Auto attemp to fetch data with any conection error 
-    while (attempTime <= app.config['FAIL_RETRY_TIMES'] and hasError):
-        resp = carInfoFetcher.get(app.config['API'])
-        hasError = carInfoFetcher.statusCode != 200
-        attempTime = attempTime + 1
-        if hasError:
-            app.logger.error('Response:%s, ErrorCode:%d, Retry:%d'% (resp, carInfoFetcher.statusCode,attempTime))
-    
-    if hasError:
-        app.logger.error('Response:%s, ErrorCode:%d' % (resp, carInfoFetcher.statusCode))
-        return resp
+    if carInfoFetcher.hasError:
+        app.logger.error(resp)
+        return 'Oops! Fetching data failed......'
     else:
-        app.logger.info('Fetch Success! DataSize: %d' % (len(resp)))
+        app.logger.info('Fetch Success! DataSize: %d FromCache:%s' % (len(resp), carInfoFetcher.fromCache))
         df = carInfoFetcher.getDataFrame()
         if app.config['SHOW_IN_TABLE']:
             return render_template('index.html',  tables=[df.to_html(classes='data')], titles=df.columns.values)
