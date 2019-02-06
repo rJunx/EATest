@@ -14,7 +14,6 @@ class CarInfoFetcher:
     '''
    
     def __init__(self, url, max_retries, expires_after_sec):
-        self.__df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
         self.hasError = False
         self.fromCache = False
         self.url = url
@@ -27,22 +26,22 @@ class CarInfoFetcher:
             self.session.mount(url, requests.adapters.HTTPAdapter(max_retries=retryPolicy))
             
     def requestData(self):
+        '''
+        Request car data from the API 
+        :return: message string
+        '''
         try:
             response = self.session.get(self.url)
             self.hasError = response.status_code != 200
             self.fromCache = False if(not self.cacheEnabled) else response.from_cache
 
-            if not self.fromCache and not self.hasError:
+            if not self.hasError:
                 try:
-                    self.__df = self.__df.iloc[0:0]
-                    self.__toDataFrame(response.json())
+                    return response.json()
                 except JSONDecodeError:
-                    pass
+                    return []
             
             return response.text
-        except urllib3.exceptions.NewConnectionError:
-            self.hasError = True
-            return 'Connection Error'
         except urllib3.exceptions.MaxRetryError as e:
             self.hasError = True
             return str(e)
@@ -50,15 +49,12 @@ class CarInfoFetcher:
             self.hasError = True
             return e
     
-    def getDataFrame(self):
+    def printDataInOrder(self, df, spaceSymbol='', breakLineSymbol='\n'):
         '''
-        Get the dataframe generated from the successful reponse
-        :return: DataFrame (Pandas)
+        Format output for DataFrame
+        :return: string
         '''
-        return self.__df
-    
-    def printDataInOrder(self, spaceSymbol='', breakLineSymbol='\n'):
-        df = self.__df.sort_values(by=['make', 'model', 'name'])
+        df = df.sort_values(by=['make', 'model', 'name'])
         ret = ''
         for _, row in df.iterrows():
             ret = ret + row['make'] + breakLineSymbol
@@ -75,13 +71,21 @@ class CarInfoFetcher:
         else:
             return default
     
-    def __toDataFrame(self, dList):
-        #make model name        
+    def toDataFrame(self, dList):
+        '''
+        Transform json data to DataFrame
+        :return: DataFrame (Pandas)
+        '''
+        #make model name
+        df = pd.DataFrame({'make':[], 'model':[], 'name':[]})
+
         for item in dList:
             name = self.__getValueByKey(item, 'name')
             cars = self.__getValueByKey(item, 'cars', [])
             
             for car in cars:
-                self.__df = self.__df.append({'make': self.__getValueByKey(car, 'make'), 
+                df = df.append({'make': self.__getValueByKey(car, 'make'), 
                                 'model': self.__getValueByKey(car, 'model'), 
                                 'name':name}, ignore_index=True)
+
+        return df
