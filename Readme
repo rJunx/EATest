@@ -5,6 +5,8 @@ System requirement:
 	MacOS
 	Python 3.6.x
 	Python Package Index (PyPI)
+	gevent
+	gunicorn
 
 
 Install dependences for Python
