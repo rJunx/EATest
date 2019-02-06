@@ -7,6 +7,7 @@ System requirement:
 	Python Package Index (PyPI)
 	gevent
 	gunicorn
+	Nginx
 
 
 Install dependences for Python
@@ -41,3 +42,23 @@ Documentation:
 		1) Open Terminal in Mac
 		2) Navigate to the project root folder
 		3) Run: sh gen_docs.sh
+
+
+Performance Test:
+	Requirement: 
+		a) Apache HttpServer: brew install httpd
+		b) Siege: brew install siege
+		c) locustio: pip install locustio
+
+	How:
+		a) ab -c 100 -n 10000 http://localhost:8080/
+		b) siege -c 100 -r 10 -b http://localhost:8080/
+		c) change the url in EATest/test/run_locust.sh to http://localhost:8080/
+		   then run: sh EATest/test/run_locust.sh
+
+
+Production (Nginx + gunicorn + Flask)
+	1) copy server_config/nginx.conf to /usr/local/etc/nginx 
+	2) Start gunicorn: sh run.sh
+	3) Start Nginx: sudo nginx
+	* The server starts at http://localhost:8080
