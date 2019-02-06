@@ -52,7 +52,7 @@ class CarInfoFetcher:
     def printDataInOrder(self, df, spaceSymbol='', breakLineSymbol='\n'):
         '''
         Format output for DataFrame
-        :return: string
+        :return: DataFrame (Pandas)
         '''
         df = df.sort_values(by=['make', 'model', 'name'])
         ret = ''

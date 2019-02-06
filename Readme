@@ -2,9 +2,9 @@ This project is for Energy Australia(EA) online code test.
 The project develops a Flask server to consume the API and show the car information in the browser.
 
 System requirement:
-MacOS
-Python 3.6.x
-Python Package Index (PyPI)
+	MacOS
+	Python 3.6.x
+	Python Package Index (PyPI)
 
 
 Install dependences for Python
@@ -15,7 +15,7 @@ Install dependences for Python
 
 How to Run:
 	1) Open Terminal in Mac
-	2) Navigate to the project folder
+	2) Navigate to the project root folder
 	3) Run in Normal Mode: sh run.sh or 
 	   Run in Debug Mode:  sh run_debug.sh
 	4) Open a browser and enter the IP (e.g. 127.0.0.1:5000) shown in the Terminal
@@ -25,3 +25,17 @@ If the scipt cannot run, please try
 	chmod u+x run.sh
 	chmod u+x run_debug.sh
 and run the script again.
+
+
+Documentation:
+	sphinx 1.8.x
+	sphinx_rtd_theme
+
+	Installation:
+		1) pip install -U sphinx
+		2) pip install sphinx_rtd_theme
+
+	How to Run:
+		1) Open Terminal in Mac
+		2) Navigate to the project root folder
+		3) Run: sh gen_docs.sh
